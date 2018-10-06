@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import datetime, random, astral, pytz, holidays, database, threading, fileinput, configparser, os
+import datetime, random, astral, pytz, holidays, database, threading, fileinput, configparser, os, subprocess
 
 path = os.path.dirname(os.path.abspath(__file__)) + '/'
  
@@ -87,15 +87,19 @@ def calculate_todays_switch_times():
     return switch_times
 
 
+def switch(parameter):
+    subprocess.call(['pilight-send', '-p', 'elro_800_switch', '-s', settings['system_code'], '-u', settings['unit_code'], parameter])
+
+
 def switch_off():
-    # TODO
+    switch('-t')
     print(datetime.datetime.now())
     print('OFF')
     schedule_next_switch()
 
 
 def switch_on():
-    # TODO
+    switch('-f')
     print(datetime.datetime.now())
     print('ON')
     schedule_next_switch()

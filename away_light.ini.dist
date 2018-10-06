@@ -1,3 +1,7 @@
+[general]
+system_code = 
+unit_code = 
+
 [database]
 host = localhost
 database = away_light
