@@ -46,6 +46,7 @@ def calculate_todays_switch_times():
     if now.hour > 3:
         today = today + datetime.timedelta(days = 1)
         now = now + datetime.timedelta(days = 1)
+    print('Calculating switch times for %s' % (today, ))
 
 
     sun = city.sun(date=today, local=True)
@@ -93,15 +94,13 @@ def switch(parameter):
 
 def switch_off():
     switch('-t')
-    print(datetime.datetime.now())
-    print('OFF')
+    print('Turning OFF at %s' % (datetime.datetime.now(), ))
     schedule_next_switch()
 
 
 def switch_on():
     switch('-f')
-    print(datetime.datetime.now())
-    print('ON')
+    print('Turning ON at %s' % (datetime.datetime.now(), ))
     schedule_next_switch()
 
 
@@ -115,11 +114,16 @@ def schedule_next_switch():
     now = datetime.datetime.now()
     run_at = next_switch_time[0]
     delay = (run_at - now).total_seconds()
-    print('Delay: %s' % (delay, ))
+
+    print('Current time: %s' % (datetime.datetime.now(), ))
+    print('Next switch time: %s' % (run_at, ))
+    print('Delay: %s seconds' % (delay, ))
 
     if next_switch_time[1] == 1:
+        print('Next switch will be to ON')
         threading.Timer(delay, switch_on).start()
     else:
+        print('Next switch will be to OFF')
         threading.Timer(delay, switch_off).start()
 
 
