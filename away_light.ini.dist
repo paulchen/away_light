@@ -1,0 +1,6 @@
+[database]
+host = localhost
+database = away_light
+username = away_light
+password =
+
