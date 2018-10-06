@@ -89,7 +89,7 @@ def calculate_todays_switch_times():
 
 
 def switch(parameter):
-    subprocess.call(['pilight-send', '-p', 'elro_800_switch', '-s', settings['system_code'], '-u', settings['unit_code'], parameter])
+    subprocess.call(['pilight-send', '-p', 'elro_800_switch', '-s', settings['general']['system_code'], '-u', settings['general']['unit_code'], parameter])
 
 
 def switch_off():
