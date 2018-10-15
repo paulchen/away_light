@@ -1,11 +1,19 @@
 #!/usr/bin/python3
 
-import datetime, random, astral, pytz, holidays, database, threading, fileinput, configparser, os, subprocess
+import datetime, random, astral, pytz, holidays, database, threading, fileinput, configparser, os, subprocess, logging
 
 path = os.path.dirname(os.path.abspath(__file__)) + '/'
  
 settings = configparser.ConfigParser()
 settings.read(path + 'away_light.ini')
+
+logfile = path + 'log/away_light.log'
+
+logger = logging.getLogger()
+handler = logging.FileHandler(logfile)
+handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 
 def calculate_switch_times(start, end, probability_on, probability_off, min_on, min_off):
@@ -46,7 +54,7 @@ def calculate_todays_switch_times():
     if now.hour > 3:
         today = today + datetime.timedelta(days = 1)
         now = now + datetime.timedelta(days = 1)
-    print('Calculating switch times for %s' % (today, ))
+    logger.info('Calculating switch times for %s' % (today, ))
 
 
     sun = city.sun(date=today, local=True)
@@ -93,14 +101,14 @@ def switch(parameter):
 
 
 def switch_off():
-    switch('-t')
-    print('Turning OFF at %s' % (datetime.datetime.now(), ))
+    switch('-f')
+    logger.info('Turning OFF')
     schedule_next_switch()
 
 
 def switch_on():
-    switch('-f')
-    print('Turning ON at %s' % (datetime.datetime.now(), ))
+    switch('-t')
+    logger.info('Turning ON')
     schedule_next_switch()
 
 
@@ -115,15 +123,14 @@ def schedule_next_switch():
     run_at = next_switch_time[0]
     delay = (run_at - now).total_seconds()
 
-    print('Current time: %s' % (datetime.datetime.now(), ))
-    print('Next switch time: %s' % (run_at, ))
-    print('Delay: %s seconds' % (delay, ))
+    logger.info('Next switch time: %s' % (run_at, ))
+    logger.info('Delay: %s seconds' % (delay, ))
 
     if next_switch_time[1] == 1:
-        print('Next switch will be to ON')
+        logger.info('Next switch will be to ON')
         threading.Timer(delay, switch_on).start()
     else:
-        print('Next switch will be to OFF')
+        logger.info('Next switch will be to OFF')
         threading.Timer(delay, switch_off).start()
 
 
