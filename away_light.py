@@ -15,6 +15,8 @@ handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s 
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
+last_update_file = path + 'tmp/last_update'
+
 
 def calculate_switch_times(start, end, probability_on, probability_off, min_on, min_off):
     switch_times = []
@@ -96,8 +98,16 @@ def calculate_todays_switch_times():
     return switch_times
 
 
+def touch(path):
+    with open(path, 'a'):
+        os.utime(path, None)
+
+
 def switch(parameter):
+    global last_update_file
+
     subprocess.call(['pilight-send', '-p', 'elro_800_switch', '-s', settings['general']['system_code'], '-u', settings['general']['unit_code'], parameter])
+    touch(last_update_file)
 
 
 def switch_off():
