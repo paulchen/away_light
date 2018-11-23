@@ -41,9 +41,12 @@ def check_last_update(filename):
 
 def check_running():
     for pid in psutil.pids():
-        p = psutil.Process(pid)
-        if p.name() == 'away_light.py':
-            return
+        try:
+            p = psutil.Process(pid)
+            if p.name() == 'away_light.py':
+                return
+        except psutil.NoSuchProcess:
+            pass
 
     print('away_light.py not running');
     sys.exit(2)
